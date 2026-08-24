@@ -209,8 +209,8 @@ plugins:
     enabled: true
     options:
       links:
-        De vuelta al claro: /
-        Señales fuera del bosque: https://x.com/geropylypchuk
+        Inicio: /
+        Hecho por Geronimo Pylypchuk: https://x.com/geropylypchuk
     layout:
       position: footer
       priority: 50
