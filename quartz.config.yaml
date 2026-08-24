@@ -209,7 +209,7 @@ plugins:
     enabled: true
     options:
       links:
-        Inicio: /
+        Inicio: https://gpylypchuk.github.io/notas/
         Hecho por Geronimo Pylypchuk: https://x.com/geropylypchuk
     layout:
       position: footer
