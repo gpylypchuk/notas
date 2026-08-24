@@ -209,7 +209,8 @@ plugins:
     enabled: true
     options:
       links:
-        Un cibernauta navegando el bosque digital: /
+        De vuelta al claro: /
+        Señales fuera del bosque: https://x.com/geropylypchuk
     layout:
       position: footer
       priority: 50
