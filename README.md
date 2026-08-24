@@ -1,17 +1,15 @@
-# Quartz v5
+# 🏮 El Jardín de Gero
 
-> “[One] who works with the door open gets all kinds of interruptions, but [they] also occasionally gets clues as to what the world is and what might be important.” — Richard Hamming
+Un jardín digital construido con [Quartz 5](https://quartz.jzhao.xyz/), donde documento mi camino aprendiendo a construir y entrenar LLMs desde cero, arquitectura de computadoras, y performance engineering aplicado a drug discovery.
 
-Quartz is a set of tools that helps you publish your [digital garden](https://jzhao.xyz/posts/networked-thought) and notes as a website for free.
+**[→ Visitar el sitio](https://gpylypchuk.github.io/notas/)**
 
-🔗 Read the documentation and get started: https://quartz.jzhao.xyz/
+## Qué vas a encontrar
 
-[Join the Discord Community](https://discord.gg/cRFFHYye7t)
+- Roadmap completo para construir un LLM desde cero, en ocho fases (por Claude jeje)
+- Notas del curso de arquitectura de computadoras de Onur Mutlu
+- Conexiones hacia ML infra para drug discovery y performance engineering
 
-## Sponsors
+## Stack
 
-<p align="center">
-  <a href="https://github.com/sponsors/jackyzha0">
-    <img src="https://cdn.jsdelivr.net/gh/jackyzha0/jackyzha0/sponsorkit/sponsors.svg" />
-  </a>
-</p>
+Quartz 5 · GitHub Pages · Obsidian
