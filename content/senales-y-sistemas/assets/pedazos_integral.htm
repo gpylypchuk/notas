@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>De los vértices a los pedazos</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: #f7f7f5;
+    color: #1f2937;
+    margin: 0;
+    padding: 24px;
+  }
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 24px 28px 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  h1 { font-size: 17px; margin: 0 0 4px; color: #111827; }
+  p.sub { margin: 0 0 18px; font-size: 13.5px; color: #6b7280; }
+  .controls { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+  .controls label { font-size: 14px; font-weight: 600; color: #374151; }
+  input[type="range"] { flex: 1; accent-color: #6d28d9; }
+  .aval { font-variant-numeric: tabular-nums; font-weight: 700; color: #6d28d9; min-width: 54px; text-align: right; }
+  svg { width: 100%; height: auto; display: block; margin-top: 14px;}
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: #374151; margin-top: 8px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .swatch { width: 14px; height: 10px; border-radius: 2px; display: inline-block; }
+  .note { margin-top: 14px; font-size: 12.5px; color: #6b7280; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Los dos v&eacute;rtices parten la franja de solape en tres</h1>
+  <p class="sub">El v&eacute;rtice de f1 (en t=a/2) y el de f2 (en t=&minus;a/2) son los &uacute;nicos lugares donde alguna de las dos deja de tener una f&oacute;rmula fija. Por eso cortamos ah&iacute;, ni un lugar antes ni despu&eacute;s.</p>
+
+  <div class="controls">
+    <label for="aSlider">a =</label>
+    <input type="range" id="aSlider" min="0" max="0.5" step="0.01" value="0.4">
+    <span class="aval" id="aVal">0.40</span>
+  </div>
+
+  <svg id="plot" viewBox="0 0 640 300" xmlns="http://www.w3.org/2000/svg"></svg>
+
+  <div class="legend">
+    <span><i class="swatch" style="background:#2563eb"></i> f1(t)</span>
+    <span><i class="swatch" style="background:#ea580c"></i> f2(t)</span>
+    <span><i class="swatch" style="background:#fde68a"></i> Pedazo I</span>
+    <span><i class="swatch" style="background:#bbf7d0"></i> Pedazo II</span>
+    <span><i class="swatch" style="background:#fecaca"></i> Pedazo III</span>
+  </div>
+
+  <p class="note" id="explain"></p>
+</div>
+
+<script>
+(function(){
+  var svg = document.getElementById('plot');
+  var slider = document.getElementById('aSlider');
+  var aValLabel = document.getElementById('aVal');
+  var explain = document.getElementById('explain');
+  var NS = 'http://www.w3.org/2000/svg';
+
+  var Tmin=-1.2, Tmax=1.2;
+  var LEFT=55, RIGHT=610, TOP=30, BOT=230;
+  var W = RIGHT-LEFT;
+  var Vmin=-0.05, Vmax=1.15;
+
+  function xPix(t){ return LEFT + (t-Tmin)/(Tmax-Tmin)*W; }
+  function yPix(v){ return TOP + (Vmax-v)/(Vmax-Vmin)*(BOT-TOP); }
+
+  function el(tag, attrs){
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  function Lambda(t){ return Math.max(0, 1-2*Math.abs(t)); }
+
+  function draw(a){
+    svg.innerHTML='';
+    svg.appendChild(el('rect', {x:0,y:0,width:640,height:300,fill:'#ffffff'}));
+
+    var L1 = a/2-0.5, R1 = -a/2;   // pedazo I
+    var L2 = -a/2,    R2 = a/2;    // pedazo II
+    var L3 = a/2,     R3 = -a/2+0.5; // pedazo III
+
+    // shaded background zones
+    svg.appendChild(el('rect', {x:xPix(L1), y:TOP, width:xPix(R1)-xPix(L1), height:BOT-TOP, fill:'#fde68a', opacity:0.55}));
+    svg.appendChild(el('rect', {x:xPix(L2), y:TOP, width:xPix(R2)-xPix(L2), height:BOT-TOP, fill:'#bbf7d0', opacity:0.55}));
+    svg.appendChild(el('rect', {x:xPix(L3), y:TOP, width:xPix(R3)-xPix(L3), height:BOT-TOP, fill:'#fecaca', opacity:0.55}));
+
+    // axes
+    svg.appendChild(el('line', {x1:LEFT, y1:yPix(0), x2:RIGHT, y2:yPix(0), stroke:'#9ca3af', 'stroke-width':1}));
+    [-1,-0.5,0,0.5,1].forEach(function(tt){
+      var x = xPix(tt);
+      svg.appendChild(el('line', {x1:x, y1:yPix(0)-3, x2:x, y2:yPix(0)+3, stroke:'#9ca3af'}));
+      var txt = el('text', {x:x, y:yPix(0)+16, 'font-size':11, 'text-anchor':'middle', fill:'#6b7280'});
+      txt.textContent = tt;
+      svg.appendChild(txt);
+    });
+
+    // curves
+    var N=300, p1=[], p2=[];
+    for (var i=0;i<=N;i++){
+      var t = Tmin + (Tmax-Tmin)*i/N;
+      p1.push(xPix(t).toFixed(2)+','+yPix(Lambda(t-a/2)).toFixed(2));
+      p2.push(xPix(t).toFixed(2)+','+yPix(Lambda(t+a/2)).toFixed(2));
+    }
+    svg.appendChild(el('polyline', {points:p1.join(' '), fill:'none', stroke:'#2563eb', 'stroke-width':2.4}));
+    svg.appendChild(el('polyline', {points:p2.join(' '), fill:'none', stroke:'#ea580c', 'stroke-width':2.4}));
+
+    // vertical lines at the four boundaries
+    [L1, -a/2, a/2, R3].forEach(function(tt, idx){
+      var x = xPix(tt);
+      svg.appendChild(el('line', {x1:x, y1:TOP, x2:x, y2:BOT, stroke:'#4b5563', 'stroke-width':1, 'stroke-dasharray':'4,3'}));
+    });
+
+    // vertex dots
+    svg.appendChild(el('circle', {cx:xPix(a/2), cy:yPix(1), r:4, fill:'#2563eb'}));
+    svg.appendChild(el('circle', {cx:xPix(-a/2), cy:yPix(1), r:4, fill:'#ea580c'}));
+    var lab1 = el('text', {x:xPix(a/2)+6, y:yPix(1)-6, 'font-size':11, fill:'#2563eb', 'font-weight':600});
+    lab1.textContent = 'vértice de f1, t=a/2';
+    svg.appendChild(lab1);
+    var lab2 = el('text', {x:xPix(-a/2)-6, y:yPix(1)-6, 'font-size':11, fill:'#ea580c', 'font-weight':600, 'text-anchor':'end'});
+    lab2.textContent = 'vértice de f2, t=-a/2';
+    svg.appendChild(lab2);
+
+    // pedazo labels
+    var midI = (L1+R1)/2, midII=(L2+R2)/2, midIII=(L3+R3)/2;
+    ['I','II','III'].forEach(function(name, idx){
+      var mid = [midI,midII,midIII][idx];
+      var txt = el('text', {x:xPix(mid), y:BOT-8, 'font-size':12, 'text-anchor':'middle', fill:'#374151', 'font-weight':700});
+      txt.textContent = name;
+      svg.appendChild(txt);
+    });
+
+    explain.innerHTML = 'Los cortes verticales est&aacute;n en ' + L1.toFixed(2) + ', ' + (-a/2).toFixed(2) + ', ' + (a/2).toFixed(2) + ' y ' + R3.toFixed(2) +
+      '. Los del medio son justo los v&eacute;rtices de f1 y f2 (los puntos de colores). Ad&eacute;ntro de cada franja (amarilla, verde, roja) ni f1 ni f2 cambian de f&oacute;rmula, as&iacute; que ah&iacute; adentro el producto f1&middot;f2 s&iacute; es un solo polinomio, y reci&eacute;n ah&iacute; se puede integrar con las reglas normales.';
+  }
+
+  slider.addEventListener('input', function(){
+    var a = parseFloat(slider.value);
+    aValLabel.textContent = a.toFixed(2);
+    draw(a);
+  });
+
+  draw(parseFloat(slider.value));
+})();
+</script>
+</body>
+</html>

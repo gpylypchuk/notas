@@ -7,12 +7,6 @@ tags: [indice]
 
 Este es mi jardín digital, donde voy documentando lo que aprendo.
 
-## Roadmap principal
+## Materias
 
-- [[Roadmap LLM desde cero]]
-
-## Otras conexiones
-
-- [[Fase 4 - Arquitectura de computadoras (Onur Mutlu)]]
-- [[ML infra para drug discovery]]
-- [[Performance engineering para modelos biomoleculares]]
+- [[senales-y-sistemas/index|Señales y Sistemas]]
