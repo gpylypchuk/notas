@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=./quartz/plugins/quartz-plugins.schema.json
 configuration:
-  pageTitle: El Jardín de Gero
+  pageTitle: El Bosque
   pageTitleSuffix: " · notas de aprendizaje"
   enableSPA: true
   enablePopovers: true

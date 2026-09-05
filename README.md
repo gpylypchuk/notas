@@ -1,6 +1,6 @@
-# 🏮 El Jardín de Gero
+# 🏮 El Bosque
 
-Un jardín digital construido con [Quartz 5](https://quartz.jzhao.xyz/), donde documento mis notas de la cursada de Señales y Sistemas en el ITBA.
+Un bosque digital construido con [Quartz 5](https://quartz.jzhao.xyz/), donde documento mis notas de la cursada de Señales y Sistemas en el ITBA.
 
 **[→ Visitar el sitio](https://gpylypchuk.github.io/notas/)**
 

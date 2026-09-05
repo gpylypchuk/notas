@@ -101,13 +101,11 @@ $$E_{x_p}+E_{x_i} = \frac13, \qquad E_{x_p}-E_{x_i} = \int_{-\infty}^{\infty} f_
 
 $f_1$ vive en $\left[\dfrac{a}{2}-\dfrac12,\ \dfrac{a}{2}+\dfrac12\right]$ y $f_2$ vive en $\left[-\dfrac{a}{2}-\dfrac12,\ -\dfrac{a}{2}+\dfrac12\right]$. Estos dos intervalos se tocan cuando $|a|\ge 1$ (ver el gráfico interactivo de abajo), caso en el que $I(a)=0$ directamente.
 
-<iframe src="assets/solape_triangulos.htm" style="width:100%; height:840px; border:none; border-radius:12px;" title="Solape de f1 y f2"></iframe>
+<iframe src="assets/solape_triangulos.htm" style="width:100%; height:820px; border:none; display:block;" title="Solape de f1 y f2"></iframe>
 
 Cuando $|a|<1$ los soportes se solapan, y hay que integrar el producto $f_1 f_2$ en la zona de solape. Ahí adentro, tanto $f_1$ como $f_2$ tienen un valor absoluto que cambia de fórmula justo en su vértice ($t=a/2$ para $f_1$, $t=-a/2$ para $f_2$), así que la franja de solape se parte en tres pedazos usando esos dos vértices como cortes.
 
-<iframe src="assets/valor_absoluto.htm" style="width:100%; height:700px; border:none; border-radius:12px;" title="De la recta al pico"></iframe>
-
-<iframe src="assets/pedazos_integral.htm" style="width:100%; height:560px; border:none; border-radius:12px;" title="Los pedazos de la integral"></iframe>
+<iframe src="assets/pedazos_integral.htm" style="width:100%; height:540px; border:none; display:block;" title="Los pedazos de la integral"></iframe>
 
 Resolviendo cada pedazo por separado (removiendo el valor absoluto según el signo, multiplicando las dos rectas resultantes, e integrando) y sumando, se llega a
 

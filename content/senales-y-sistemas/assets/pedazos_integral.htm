@@ -3,33 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <title>De los vértices a los pedazos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --light: #f5efe0;
+    --lightgray: #e3d5b8;
+    --gray: #9c8b6a;
+    --darkgray: #4a3f2f;
+    --dark: #2c2418;
+    --secondary: #b5651d;
+    --tertiary: #4f6f52;
+    --highlight: rgba(181, 101, 29, 0.28);
+    --highlight2: rgba(79, 111, 82, 0.22);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --light: #14111a;
+      --lightgray: #2b2430;
+      --gray: #5c5266;
+      --darkgray: #d8cfc4;
+      --dark: #f3e9d2;
+      --secondary: #e8934a;
+      --tertiary: #6b8f71;
+      --highlight: rgba(232, 147, 74, 0.30);
+      --highlight2: rgba(107, 143, 113, 0.28);
+    }
+  }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-    background: #f7f7f5;
-    color: #1f2937;
+    font-family: Lora, Georgia, serif;
+    background: var(--light);
+    color: var(--darkgray);
     margin: 0;
-    padding: 24px;
+    padding: 4px 4px 20px;
   }
   .wrap {
     max-width: 720px;
     margin: 0 auto;
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 24px 28px 28px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   }
-  h1 { font-size: 17px; margin: 0 0 4px; color: #111827; }
-  p.sub { margin: 0 0 18px; font-size: 13.5px; color: #6b7280; }
+  h1 { font-family: Fraunces, Georgia, serif; font-weight: 700; font-size: 18px; margin: 0 0 4px; color: var(--dark); }
+  p.sub { margin: 0 0 18px; font-size: 13.5px; color: var(--gray); }
   .controls { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
-  .controls label { font-size: 14px; font-weight: 600; color: #374151; }
-  input[type="range"] { flex: 1; accent-color: #6d28d9; }
-  .aval { font-variant-numeric: tabular-nums; font-weight: 700; color: #6d28d9; min-width: 54px; text-align: right; }
+  .controls label { font-family: Fraunces, Georgia, serif; font-size: 14px; font-weight: 600; color: var(--dark); }
+  input[type="range"] { flex: 1; accent-color: var(--secondary); }
+  .aval { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--secondary); min-width: 54px; text-align: right; }
   svg { width: 100%; height: auto; display: block; margin-top: 14px;}
-  .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: #374151; margin-top: 8px; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--darkgray); margin-top: 8px; }
   .legend span { display: inline-flex; align-items: center; gap: 6px; }
   .swatch { width: 14px; height: 10px; border-radius: 2px; display: inline-block; }
-  .note { margin-top: 14px; font-size: 12.5px; color: #6b7280; line-height: 1.5; }
+  .note { margin-top: 14px; font-size: 12.5px; color: var(--gray); line-height: 1.5; }
 </style>
 </head>
 <body>
@@ -46,11 +69,11 @@
   <svg id="plot" viewBox="0 0 640 300" xmlns="http://www.w3.org/2000/svg"></svg>
 
   <div class="legend">
-    <span><i class="swatch" style="background:#2563eb"></i> f1(t)</span>
-    <span><i class="swatch" style="background:#ea580c"></i> f2(t)</span>
-    <span><i class="swatch" style="background:#fde68a"></i> Pedazo I</span>
-    <span><i class="swatch" style="background:#bbf7d0"></i> Pedazo II</span>
-    <span><i class="swatch" style="background:#fecaca"></i> Pedazo III</span>
+    <span><i class="swatch" id="sw-f1"></i> f1(t)</span>
+    <span><i class="swatch" id="sw-f2"></i> f2(t)</span>
+    <span><i class="swatch" id="sw-pI"></i> Pedazo I</span>
+    <span><i class="swatch" id="sw-pII"></i> Pedazo II</span>
+    <span><i class="swatch" id="sw-pIII"></i> Pedazo III</span>
   </div>
 
   <p class="note" id="explain"></p>
@@ -63,6 +86,17 @@
   var aValLabel = document.getElementById('aVal');
   var explain = document.getElementById('explain');
   var NS = 'http://www.w3.org/2000/svg';
+
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  function palette(){
+    return mq.matches ? {
+      f1:'#e8934a', f2:'#6b8f71', zoneI:'rgba(232,147,74,0.30)', zoneII:'rgba(107,143,113,0.28)',
+      axis:'#5c5266', text:'#d8cfc4', cut:'#9c8b6a', bg:'#14111a'
+    } : {
+      f1:'#b5651d', f2:'#4f6f52', zoneI:'rgba(181,101,29,0.28)', zoneII:'rgba(79,111,82,0.22)',
+      axis:'#9c8b6a', text:'#4a3f2f', cut:'#9c8b6a', bg:'#f5efe0'
+    };
+  }
 
   var Tmin=-1.2, Tmax=1.2;
   var LEFT=55, RIGHT=610, TOP=30, BOT=230;
@@ -80,25 +114,35 @@
 
   function Lambda(t){ return Math.max(0, 1-2*Math.abs(t)); }
 
+  function updateLegendSwatches(pal){
+    document.getElementById('sw-f1').style.background = pal.f1;
+    document.getElementById('sw-f2').style.background = pal.f2;
+    document.getElementById('sw-pI').style.background = pal.zoneI;
+    document.getElementById('sw-pII').style.background = pal.zoneII;
+    document.getElementById('sw-pIII').style.background = pal.zoneI;
+  }
+
   function draw(a){
+    var pal = palette();
+    updateLegendSwatches(pal);
     svg.innerHTML='';
-    svg.appendChild(el('rect', {x:0,y:0,width:640,height:300,fill:'#ffffff'}));
+    svg.appendChild(el('rect', {x:0,y:0,width:640,height:300,fill:pal.bg}));
 
     var L1 = a/2-0.5, R1 = -a/2;   // pedazo I
     var L2 = -a/2,    R2 = a/2;    // pedazo II
     var L3 = a/2,     R3 = -a/2+0.5; // pedazo III
 
-    // shaded background zones
-    svg.appendChild(el('rect', {x:xPix(L1), y:TOP, width:xPix(R1)-xPix(L1), height:BOT-TOP, fill:'#fde68a', opacity:0.55}));
-    svg.appendChild(el('rect', {x:xPix(L2), y:TOP, width:xPix(R2)-xPix(L2), height:BOT-TOP, fill:'#bbf7d0', opacity:0.55}));
-    svg.appendChild(el('rect', {x:xPix(L3), y:TOP, width:xPix(R3)-xPix(L3), height:BOT-TOP, fill:'#fecaca', opacity:0.55}));
+    // shaded background zones (I y III comparten color, son la imagen espejada una de la otra)
+    svg.appendChild(el('rect', {x:xPix(L1), y:TOP, width:xPix(R1)-xPix(L1), height:BOT-TOP, fill:pal.zoneI}));
+    svg.appendChild(el('rect', {x:xPix(L2), y:TOP, width:xPix(R2)-xPix(L2), height:BOT-TOP, fill:pal.zoneII}));
+    svg.appendChild(el('rect', {x:xPix(L3), y:TOP, width:xPix(R3)-xPix(L3), height:BOT-TOP, fill:pal.zoneI}));
 
     // axes
-    svg.appendChild(el('line', {x1:LEFT, y1:yPix(0), x2:RIGHT, y2:yPix(0), stroke:'#9ca3af', 'stroke-width':1}));
+    svg.appendChild(el('line', {x1:LEFT, y1:yPix(0), x2:RIGHT, y2:yPix(0), stroke:pal.axis, 'stroke-width':1}));
     [-1,-0.5,0,0.5,1].forEach(function(tt){
       var x = xPix(tt);
-      svg.appendChild(el('line', {x1:x, y1:yPix(0)-3, x2:x, y2:yPix(0)+3, stroke:'#9ca3af'}));
-      var txt = el('text', {x:x, y:yPix(0)+16, 'font-size':11, 'text-anchor':'middle', fill:'#6b7280'});
+      svg.appendChild(el('line', {x1:x, y1:yPix(0)-3, x2:x, y2:yPix(0)+3, stroke:pal.axis}));
+      var txt = el('text', {x:x, y:yPix(0)+16, 'font-size':11, 'text-anchor':'middle', fill:pal.text, 'font-family':'Lora, serif'});
       txt.textContent = tt;
       svg.appendChild(txt);
     });
@@ -110,22 +154,22 @@
       p1.push(xPix(t).toFixed(2)+','+yPix(Lambda(t-a/2)).toFixed(2));
       p2.push(xPix(t).toFixed(2)+','+yPix(Lambda(t+a/2)).toFixed(2));
     }
-    svg.appendChild(el('polyline', {points:p1.join(' '), fill:'none', stroke:'#2563eb', 'stroke-width':2.4}));
-    svg.appendChild(el('polyline', {points:p2.join(' '), fill:'none', stroke:'#ea580c', 'stroke-width':2.4}));
+    svg.appendChild(el('polyline', {points:p1.join(' '), fill:'none', stroke:pal.f1, 'stroke-width':2.6}));
+    svg.appendChild(el('polyline', {points:p2.join(' '), fill:'none', stroke:pal.f2, 'stroke-width':2.6}));
 
     // vertical lines at the four boundaries
     [L1, -a/2, a/2, R3].forEach(function(tt, idx){
       var x = xPix(tt);
-      svg.appendChild(el('line', {x1:x, y1:TOP, x2:x, y2:BOT, stroke:'#4b5563', 'stroke-width':1, 'stroke-dasharray':'4,3'}));
+      svg.appendChild(el('line', {x1:x, y1:TOP, x2:x, y2:BOT, stroke:pal.cut, 'stroke-width':1, 'stroke-dasharray':'4,3'}));
     });
 
     // vertex dots
-    svg.appendChild(el('circle', {cx:xPix(a/2), cy:yPix(1), r:4, fill:'#2563eb'}));
-    svg.appendChild(el('circle', {cx:xPix(-a/2), cy:yPix(1), r:4, fill:'#ea580c'}));
-    var lab1 = el('text', {x:xPix(a/2)+6, y:yPix(1)-6, 'font-size':11, fill:'#2563eb', 'font-weight':600});
+    svg.appendChild(el('circle', {cx:xPix(a/2), cy:yPix(1), r:4, fill:pal.f1}));
+    svg.appendChild(el('circle', {cx:xPix(-a/2), cy:yPix(1), r:4, fill:pal.f2}));
+    var lab1 = el('text', {x:xPix(a/2)+6, y:yPix(1)-6, 'font-size':11, fill:pal.f1, 'font-weight':600, 'font-family':'Lora, serif'});
     lab1.textContent = 'vértice de f1, t=a/2';
     svg.appendChild(lab1);
-    var lab2 = el('text', {x:xPix(-a/2)-6, y:yPix(1)-6, 'font-size':11, fill:'#ea580c', 'font-weight':600, 'text-anchor':'end'});
+    var lab2 = el('text', {x:xPix(-a/2)-6, y:yPix(1)-6, 'font-size':11, fill:pal.f2, 'font-weight':600, 'text-anchor':'end', 'font-family':'Lora, serif'});
     lab2.textContent = 'vértice de f2, t=-a/2';
     svg.appendChild(lab2);
 
@@ -133,13 +177,13 @@
     var midI = (L1+R1)/2, midII=(L2+R2)/2, midIII=(L3+R3)/2;
     ['I','II','III'].forEach(function(name, idx){
       var mid = [midI,midII,midIII][idx];
-      var txt = el('text', {x:xPix(mid), y:BOT-8, 'font-size':12, 'text-anchor':'middle', fill:'#374151', 'font-weight':700});
+      var txt = el('text', {x:xPix(mid), y:BOT-8, 'font-size':12, 'text-anchor':'middle', fill:pal.text, 'font-weight':700, 'font-family':'Fraunces, serif'});
       txt.textContent = name;
       svg.appendChild(txt);
     });
 
     explain.innerHTML = 'Los cortes verticales est&aacute;n en ' + L1.toFixed(2) + ', ' + (-a/2).toFixed(2) + ', ' + (a/2).toFixed(2) + ' y ' + R3.toFixed(2) +
-      '. Los del medio son justo los v&eacute;rtices de f1 y f2 (los puntos de colores). Ad&eacute;ntro de cada franja (amarilla, verde, roja) ni f1 ni f2 cambian de f&oacute;rmula, as&iacute; que ah&iacute; adentro el producto f1&middot;f2 s&iacute; es un solo polinomio, y reci&eacute;n ah&iacute; se puede integrar con las reglas normales.';
+      '. Los del medio son justo los v&eacute;rtices de f1 y f2 (los puntos de colores). Ad&eacute;ntro de cada franja (I y III en un tono, II en el otro) ni f1 ni f2 cambian de f&oacute;rmula, as&iacute; que ah&iacute; adentro el producto f1&middot;f2 s&iacute; es un solo polinomio, y reci&eacute;n ah&iacute; se puede integrar con las reglas normales.';
   }
 
   slider.addEventListener('input', function(){
@@ -147,6 +191,8 @@
     aValLabel.textContent = a.toFixed(2);
     draw(a);
   });
+
+  mq.addEventListener('change', function(){ draw(parseFloat(slider.value)); });
 
   draw(parseFloat(slider.value));
 })();

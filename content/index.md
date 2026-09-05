@@ -5,7 +5,7 @@ tags: [indice]
 
 # Bienvenido
 
-Este es mi jardín digital, donde voy documentando lo que aprendo.
+Este es mi bosque digital, donde voy documentando lo que aprendo.
 
 ## Materias
 

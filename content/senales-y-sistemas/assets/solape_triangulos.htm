@@ -3,31 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <title>Solape de f1 y f2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --light: #f5efe0;
+    --lightgray: #e3d5b8;
+    --gray: #9c8b6a;
+    --darkgray: #4a3f2f;
+    --dark: #2c2418;
+    --secondary: #b5651d;
+    --tertiary: #4f6f52;
+    --highlight: rgba(181, 101, 29, 0.15);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --light: #14111a;
+      --lightgray: #2b2430;
+      --gray: #5c5266;
+      --darkgray: #d8cfc4;
+      --dark: #f3e9d2;
+      --secondary: #e8934a;
+      --tertiary: #6b8f71;
+      --highlight: rgba(232, 147, 74, 0.15);
+    }
+  }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-    background: #f7f7f5;
-    color: #1f2937;
+    font-family: Lora, Georgia, serif;
+    background: var(--light);
+    color: var(--darkgray);
     margin: 0;
-    padding: 24px;
+    padding: 4px 4px 20px;
   }
   .wrap {
     max-width: 720px;
     margin: 0 auto;
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 24px 28px 28px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   }
   h1 {
-    font-size: 18px;
+    font-family: Fraunces, Georgia, serif;
+    font-weight: 700;
+    font-size: 19px;
     margin: 0 0 4px;
-    color: #111827;
+    color: var(--dark);
   }
   p.sub {
     margin: 0 0 18px;
     font-size: 13.5px;
-    color: #6b7280;
+    color: var(--gray);
   }
   .controls {
     display: flex;
@@ -37,19 +60,20 @@
     flex-wrap: wrap;
   }
   .controls label {
+    font-family: Fraunces, Georgia, serif;
     font-size: 14px;
     font-weight: 600;
-    color: #374151;
+    color: var(--dark);
   }
   input[type="range"] {
     flex: 1;
     min-width: 180px;
-    accent-color: #6d28d9;
+    accent-color: var(--secondary);
   }
   .aval {
     font-variant-numeric: tabular-nums;
     font-weight: 700;
-    color: #6d28d9;
+    color: var(--secondary);
     min-width: 54px;
     text-align: right;
   }
@@ -60,17 +84,18 @@
     flex-wrap: wrap;
   }
   .presets button {
-    border: 1px solid #d1d5db;
-    background: #f9fafb;
+    font-family: Lora, Georgia, serif;
+    border: 1px solid var(--lightgray);
+    background: transparent;
     border-radius: 6px;
     padding: 4px 10px;
     font-size: 12.5px;
     cursor: pointer;
-    color: #374151;
+    color: var(--darkgray);
   }
   .presets button:hover {
-    background: #ede9fe;
-    border-color: #a78bfa;
+    background: var(--highlight);
+    border-color: var(--secondary);
   }
   svg {
     width: 100%;
@@ -82,7 +107,7 @@
     gap: 18px;
     flex-wrap: wrap;
     font-size: 12.5px;
-    color: #374151;
+    color: var(--darkgray);
     margin-top: 6px;
   }
   .legend span {
@@ -103,27 +128,28 @@
     gap: 10px;
   }
   .card {
-    background: #f9fafb;
-    border: 1px solid #eee;
+    background: var(--highlight);
+    border: 1px solid var(--lightgray);
     border-radius: 8px;
     padding: 10px 12px;
     text-align: center;
   }
   .card .lbl {
     font-size: 11.5px;
-    color: #6b7280;
+    color: var(--gray);
     margin-bottom: 3px;
   }
   .card .val {
+    font-family: Fraunces, Georgia, serif;
     font-size: 16px;
     font-weight: 700;
-    color: #111827;
+    color: var(--dark);
     font-variant-numeric: tabular-nums;
   }
   .note {
     margin-top: 16px;
     font-size: 12.5px;
-    color: #6b7280;
+    color: var(--gray);
     line-height: 1.5;
   }
 </style>
@@ -149,11 +175,11 @@
   <svg id="plot" viewBox="0 0 640 460" xmlns="http://www.w3.org/2000/svg"></svg>
 
   <div class="legend">
-    <span><i class="swatch" style="background:#2563eb"></i> f&#8321;(t) = &Lambda;(t&minus;a/2)</span>
-    <span><i class="swatch" style="background:#ea580c"></i> f&#8322;(t) = &Lambda;(t+a/2)</span>
-    <span><i class="swatch" style="background:#7c3aed"></i> zona de solape</span>
-    <span><i class="swatch" style="background:#059669"></i> x<sub>p</sub>(t)</span>
-    <span><i class="swatch" style="background:#dc2626"></i> x<sub>i</sub>(t)</span>
+    <span><i class="swatch" id="sw-f1"></i> f&#8321;(t) = &Lambda;(t&minus;a/2)</span>
+    <span><i class="swatch" id="sw-f2"></i> f&#8322;(t) = &Lambda;(t+a/2)</span>
+    <span><i class="swatch" id="sw-overlap"></i> zona de solape</span>
+    <span><i class="swatch" id="sw-xp"></i> x<sub>p</sub>(t)</span>
+    <span><i class="swatch" id="sw-xi"></i> x<sub>i</sub>(t)</span>
   </div>
 
   <div class="results">
@@ -175,6 +201,17 @@
   var statusNote = document.getElementById('statusNote');
 
   var NS = 'http://www.w3.org/2000/svg';
+
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  function palette(){
+    return mq.matches ? {
+      f1:'#e8934a', f2:'#6b8f71', overlap:'rgba(232,147,74,0.30)',
+      xp:'#f3e9d2', xi:'#d8cfc4', axis:'#5c5266', text:'#d8cfc4', bg:'#14111a'
+    } : {
+      f1:'#b5651d', f2:'#4f6f52', overlap:'rgba(181,101,29,0.30)',
+      xp:'#2c2418', xi:'#4a3f2f', axis:'#9c8b6a', text:'#4a3f2f', bg:'#f5efe0'
+    };
+  }
 
   // Coordinate mapping
   var Tmin = -2.5, Tmax = 2.5;
@@ -218,30 +255,37 @@
     return 1/6;
   }
 
+  function updateLegendSwatches(pal){
+    document.getElementById('sw-f1').style.background = pal.f1;
+    document.getElementById('sw-f2').style.background = pal.f2;
+    document.getElementById('sw-overlap').style.background = pal.overlap;
+    document.getElementById('sw-xp').style.background = pal.xp;
+    document.getElementById('sw-xi').style.background = pal.xi;
+  }
+
   function draw(a){
+    var pal = palette();
+    updateLegendSwatches(pal);
     svg.innerHTML = '';
 
-    // background
-    svg.appendChild(el('rect', {x:0,y:0,width:640,height:460,fill:'#ffffff'}));
+    svg.appendChild(el('rect', {x:0,y:0,width:640,height:460,fill:pal.bg}));
 
     // ---- TOP PLOT ----
-    // axes
-    svg.appendChild(el('line', {x1:PLOT_LEFT, y1:yPixTop(0), x2:PLOT_RIGHT, y2:yPixTop(0), stroke:'#9ca3af', 'stroke-width':1}));
-    svg.appendChild(el('line', {x1:xPix(0), y1:topY0-5, x2:xPix(0), y2:topY1, stroke:'#9ca3af', 'stroke-width':1}));
+    svg.appendChild(el('line', {x1:PLOT_LEFT, y1:yPixTop(0), x2:PLOT_RIGHT, y2:yPixTop(0), stroke:pal.axis, 'stroke-width':1}));
+    svg.appendChild(el('line', {x1:xPix(0), y1:topY0-5, x2:xPix(0), y2:topY1, stroke:pal.axis, 'stroke-width':1}));
 
-    // t tick marks and labels (top axis)
     [-2,-1,0,1,2].forEach(function(tt){
       var x = xPix(tt);
-      svg.appendChild(el('line', {x1:x, y1:yPixTop(0)-3, x2:x, y2:yPixTop(0)+3, stroke:'#9ca3af'}));
-      var txt = el('text', {x:x, y:yPixTop(0)+16, 'font-size':11, 'text-anchor':'middle', fill:'#6b7280'});
+      svg.appendChild(el('line', {x1:x, y1:yPixTop(0)-3, x2:x, y2:yPixTop(0)+3, stroke:pal.axis}));
+      var txt = el('text', {x:x, y:yPixTop(0)+16, 'font-size':11, 'text-anchor':'middle', fill:pal.text, 'font-family':'Lora, serif'});
       txt.textContent = tt;
       svg.appendChild(txt);
     });
-    var y1lab = el('text', {x:PLOT_LEFT-8, y:yPixTop(1)+4, 'font-size':11, 'text-anchor':'end', fill:'#6b7280'});
+    var y1lab = el('text', {x:PLOT_LEFT-8, y:yPixTop(1)+4, 'font-size':11, 'text-anchor':'end', fill:pal.text, 'font-family':'Lora, serif'});
     y1lab.textContent = '1';
     svg.appendChild(y1lab);
 
-    var titleTop = el('text', {x:PLOT_LEFT, y:12, 'font-size':12, fill:'#374151', 'font-weight':'600'});
+    var titleTop = el('text', {x:PLOT_LEFT, y:12, 'font-size':12, fill:pal.text, 'font-weight':'600', 'font-family':'Fraunces, serif'});
     titleTop.textContent = 'f1(t) y f2(t)';
     svg.appendChild(titleTop);
 
@@ -260,43 +304,43 @@
       var poly = overlapPts.slice();
       poly.push(xPix(Tmax).toFixed(2)+','+yPixTop(0).toFixed(2));
       poly.push(xPix(Tmin).toFixed(2)+','+yPixTop(0).toFixed(2));
-      svg.appendChild(el('polygon', {points: poly.join(' '), fill:'#7c3aed', 'fill-opacity':0.28, stroke:'none'}));
+      svg.appendChild(el('polygon', {points: poly.join(' '), fill:pal.overlap, stroke:'none'}));
     }
 
     // f1, f2 curves
-    svg.appendChild(el('polyline', {points: buildPoints(function(t){return Lambda(t-a/2);}, yPixTop, N), fill:'none', stroke:'#2563eb', 'stroke-width':2.4}));
-    svg.appendChild(el('polyline', {points: buildPoints(function(t){return Lambda(t+a/2);}, yPixTop, N), fill:'none', stroke:'#ea580c', 'stroke-width':2.4, 'stroke-dasharray':'0'}));
+    svg.appendChild(el('polyline', {points: buildPoints(function(t){return Lambda(t-a/2);}, yPixTop, N), fill:'none', stroke:pal.f1, 'stroke-width':2.6}));
+    svg.appendChild(el('polyline', {points: buildPoints(function(t){return Lambda(t+a/2);}, yPixTop, N), fill:'none', stroke:pal.f2, 'stroke-width':2.6}));
 
     // vertex markers at a/2 and -a/2
     [a/2, -a/2].forEach(function(tt, idx){
       var x = xPix(tt);
-      svg.appendChild(el('line', {x1:x, y1:topY0, x2:x, y2:yPixTop(0), stroke: idx===0? '#2563eb':'#ea580c', 'stroke-width':1, 'stroke-dasharray':'4,3', opacity:0.6}));
+      svg.appendChild(el('line', {x1:x, y1:topY0, x2:x, y2:yPixTop(0), stroke: idx===0? pal.f1:pal.f2, 'stroke-width':1, 'stroke-dasharray':'4,3', opacity:0.6}));
     });
 
     // ---- BOTTOM PLOT ----
-    svg.appendChild(el('line', {x1:PLOT_LEFT, y1:yPixBot(0), x2:PLOT_RIGHT, y2:yPixBot(0), stroke:'#9ca3af', 'stroke-width':1}));
-    svg.appendChild(el('line', {x1:xPix(0), y1:botY0-5, x2:xPix(0), y2:botY1, stroke:'#9ca3af', 'stroke-width':1}));
+    svg.appendChild(el('line', {x1:PLOT_LEFT, y1:yPixBot(0), x2:PLOT_RIGHT, y2:yPixBot(0), stroke:pal.axis, 'stroke-width':1}));
+    svg.appendChild(el('line', {x1:xPix(0), y1:botY0-5, x2:xPix(0), y2:botY1, stroke:pal.axis, 'stroke-width':1}));
 
     [-2,-1,0,1,2].forEach(function(tt){
       var x = xPix(tt);
-      svg.appendChild(el('line', {x1:x, y1:yPixBot(0)-3, x2:x, y2:yPixBot(0)+3, stroke:'#9ca3af'}));
-      var txt = el('text', {x:x, y:yPixBot(0)+16, 'font-size':11, 'text-anchor':'middle', fill:'#6b7280'});
+      svg.appendChild(el('line', {x1:x, y1:yPixBot(0)-3, x2:x, y2:yPixBot(0)+3, stroke:pal.axis}));
+      var txt = el('text', {x:x, y:yPixBot(0)+16, 'font-size':11, 'text-anchor':'middle', fill:pal.text, 'font-family':'Lora, serif'});
       txt.textContent = tt;
       svg.appendChild(txt);
     });
 
-    var titleBot = el('text', {x:PLOT_LEFT, y:botY0-30, 'font-size':12, fill:'#374151', 'font-weight':'600'});
+    var titleBot = el('text', {x:PLOT_LEFT, y:botY0-30, 'font-size':12, fill:pal.text, 'font-weight':'600', 'font-family':'Fraunces, serif'});
     titleBot.textContent = 'xp(t) = (f1+f2)/2   y   xi(t) = (f1-f2)/2';
     svg.appendChild(titleBot);
 
-    svg.appendChild(el('polyline', {points: buildPoints(function(t){return (Lambda(t-a/2)+Lambda(t+a/2))/2;}, yPixBot, N), fill:'none', stroke:'#059669', 'stroke-width':2.4}));
-    svg.appendChild(el('polyline', {points: buildPoints(function(t){return (Lambda(t-a/2)-Lambda(t+a/2))/2;}, yPixBot, N), fill:'none', stroke:'#dc2626', 'stroke-width':2.4}));
+    svg.appendChild(el('polyline', {points: buildPoints(function(t){return (Lambda(t-a/2)+Lambda(t+a/2))/2;}, yPixBot, N), fill:'none', stroke:pal.xp, 'stroke-width':2.8}));
+    svg.appendChild(el('polyline', {points: buildPoints(function(t){return (Lambda(t-a/2)-Lambda(t+a/2))/2;}, yPixBot, N), fill:'none', stroke:pal.xi, 'stroke-width':2.2, 'stroke-dasharray':'6,3'}));
 
     // labels for x axis "t"
-    var tlab1 = el('text', {x:PLOT_RIGHT+6, y:yPixTop(0)+4, 'font-size':11, fill:'#6b7280'});
+    var tlab1 = el('text', {x:PLOT_RIGHT+6, y:yPixTop(0)+4, 'font-size':11, fill:pal.text, 'font-family':'Lora, serif'});
     tlab1.textContent = 't';
     svg.appendChild(tlab1);
-    var tlab2 = el('text', {x:PLOT_RIGHT+6, y:yPixBot(0)+4, 'font-size':11, fill:'#6b7280'});
+    var tlab2 = el('text', {x:PLOT_RIGHT+6, y:yPixBot(0)+4, 'font-size':11, fill:pal.text, 'font-family':'Lora, serif'});
     tlab2.textContent = 't';
     svg.appendChild(tlab2);
 
@@ -307,9 +351,9 @@
     exiVal.textContent = ei.toFixed(4);
 
     if (Math.abs(a) >= 1){
-      statusNote.textContent = '|a| = ' + a.toFixed(2) + ' ≥ 1, los soportes no se tocan. No hay zona violeta, y Exp = Exi = 1/6 exactamente.';
+      statusNote.textContent = '|a| = ' + a.toFixed(2) + ' ≥ 1, los soportes no se tocan. No hay zona sombreada, y Exp = Exi = 1/6 exactamente.';
     } else {
-      statusNote.textContent = '|a| = ' + a.toFixed(2) + ' < 1, los triangulos se superponen (zona violeta). Esa area de solape es la que hace que Exp y Exi se aparten de 1/6.';
+      statusNote.textContent = '|a| = ' + a.toFixed(2) + ' < 1, los triángulos se superponen (zona sombreada). Esa área de solape es la que hace que Exp y Exi se aparten de 1/6.';
     }
   }
 
@@ -327,6 +371,8 @@
       draw(a);
     });
   });
+
+  mq.addEventListener('change', function(){ draw(parseFloat(slider.value)); });
 
   draw(parseFloat(slider.value));
 })();
